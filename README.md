@@ -162,3 +162,253 @@ ip route 0.0.0.0 0.0.0.0 gig1/0/2
 ---
 
 
+
+
+```markdown
+# CORE SW2 Configuration
+
+## General Configuration
+
+```plaintext
+hostname core-sw2
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+ip domain name sohan
+username admin password cisco
+crypto key generate rsa
+  1024
+line vty 0 15
+  login local
+  transport input ssh
+ip ssh version 2
+```
+
+## Interface Configuration
+
+```plaintext
+show cdp neighbor
+
+interface range gig1/0/3-8
+ switchport encapsulation dot1Q
+ switchport mode trunk
+
+interface range gig1/0/1-2
+ no switchport
+
+interface gig1/0/1
+ ip address 172.16.3.157 255.255.255.252
+ no shutdown
+
+interface gig1/0/2
+ ip address 172.16.3.153 255.255.255.252
+ no shutdown
+```
+
+## IP Routing and OSPF Configuration
+
+```plaintext
+ip routing
+
+router ospf 10
+ router-id 1.1.1.1
+ network 172.16.1.0 0.0.0.127 area 0
+ network 172.16.1.128 0.0.0.127 area 0
+ network 172.16.2.0 0.0.0.127 area 0
+ network 172.16.2.128 0.0.0.127 area 0
+ network 172.16.3.0 0.0.0.127 area 0
+ network 172.16.3.128 0.0.0.15 area 0
+ network 172.16.3.152 0.0.0.3 area 0
+ network 172.16.3.156 0.0.0.3 area 0
+```
+
+## Static Routing
+
+```plaintext
+ip route 0.0.0.0 0.0.0.0 gig1/0/1
+ip route 0.0.0.0 0.0.0.0 gig1/0/2
+```
+```
+
+```markdown
+# Access Switch Configurations
+
+## ASW1 Configuration
+
+```plaintext
+hostname asw1
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+interface range fa0/3-5
+ switchport access vlan 10
+
+vlan 99
+ name blackhole
+
+interface range gig0/1-2
+ switchport access vlan 99
+```
+
+## ASW2 Configuration
+
+```plaintext
+hostname asw2
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+interface range fa0/3-5
+ switchport access vlan 20
+
+vlan 99
+ name blackhole
+
+interface range gig0/1-2
+ switchport access vlan 99
+```
+
+## ASW3 Configuration
+
+```plaintext
+hostname asw3
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+interface range fa0/3-5
+ switchport access vlan 30
+
+vlan 99
+ name blackhole
+
+interface range gig0/1-2
+ switchport access vlan 99
+
+interface range fa0/3-24
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security violation shutdown
+ switchport port-security mac-address sticky
+ do show port-security
+
+interface fa0/4
+ no switchport port-security
+ no switchport port-security maximum 1
+ no switchport port-security mac-address sticky
+ no switchport port-security violation shutdown
+```
+
+## ASW4 Configuration
+
+```plaintext
+hostname asw4
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+interface range fa0/3-5
+ switchport access vlan 40
+
+vlan 99
+ name blackhole
+
+interface range gig0/1-2
+ switchport access vlan 99
+```
+
+## ASW5 Configuration
+
+```plaintext
+hostname asw5
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+interface range fa0/3-5
+ switchport access vlan 50
+
+vlan 99
+ name blackhole
+
+interface range gig0/1-2
+ switchport access vlan 99
+```
+
+## ASW6 Configuration
+
+```plaintext
+hostname asw6
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+interface range fa0/3-5
+ switchport access vlan 60
+
+vlan 99
+ name blackhole
+
+interface range gig0/1-2
+ switchport access vlan 99
+```
+```
