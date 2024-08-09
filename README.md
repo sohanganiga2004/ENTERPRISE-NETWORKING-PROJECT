@@ -412,3 +412,206 @@ interface range gig0/1-2
  switchport access vlan 99
 ```
 ```
+
+
+
+```markdown
+# Gateway and ISP Router Configurations
+
+## CORE GW1 Configuration
+
+```plaintext
+hostname core-gw1
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+ip domain name sohan
+
+username admin password cisco
+crypto key generate rsa
+  1024
+line vty 0 15
+  login local
+  transport input ssh
+ip ssh version 2
+
+interface gig0/0
+ ip address 172.16.3.146 255.255.255.252
+ no shutdown
+
+interface gig0/1
+ ip address 172.16.3.154 255.255.255.252
+ no shutdown
+
+interface se0/3/0
+ clock rate 64000
+ ip address 195.136.17.1 255.255.255.252
+ no shutdown
+
+interface se0/3/1
+ clock rate 64000
+ ip address 195.136.17.5 255.255.255.252
+ no shutdown
+
+router ospf 10
+ router-id 3.3.3.3
+ network 172.16.3.144 0.0.0.3 area 0
+ network 172.16.3.152 0.0.0.3 area 0
+
+ip nat inside source list 1 interface se0/3/0 overload
+ip nat inside source list 1 interface se0/3/1 overload
+
+access-list 1 permit 172.16.1.0 0.0.0.127
+access-list 1 permit 172.16.1.128 0.0.0.127
+access-list 1 permit 172.16.2.0 0.0.0.127
+access-list 1 permit 172.16.2.128 0.0.0.127
+access-list 1 permit 172.16.3.0 0.0.0.127
+access-list 1 permit 172.16.3.128 0.0.0.15
+
+interface range gig0/0-1
+ ip nat inside
+interface se0/3/0
+ ip nat outside
+interface se0/3/1
+ ip nat outside
+
+router bgp 100
+ network 195.136.17.0 mask 255.255.255.252 
+ network 195.136.17.4 mask 255.255.255.252 
+ neighbor 195.136.17.2 remote-as 200
+ neighbor 195.136.17.6 remote-as 200
+```
+
+## CORE GW2 Configuration
+
+```plaintext
+hostname core-gw2
+banner motd #NO Unauthorized Access!!!#
+no ip domain lookup
+
+line console 0
+ password cisco
+ login
+exit
+
+enable password cisco
+
+service password-encryption
+
+ip domain name sohan
+
+username admin password cisco
+crypto key generate rsa
+  1024
+line vty 0 15
+  login local
+  transport input ssh
+ip ssh version 2
+
+interface gig0/0
+ ip address 172.16.3.158 255.255.255.252
+ no shutdown
+
+interface gig0/1
+ ip address 172.16.3.150 255.255.255.252
+ no shutdown
+
+interface se0/3/0
+ clock rate 64000
+ ip address 195.136.17.9 255.255.255.252
+ no shutdown
+
+interface se0/3/1
+ clock rate 64000
+ ip address 195.136.17.13 255.255.255.252
+ no shutdown
+
+router ospf 10
+ router-id 4.4.4.4
+ network 172.16.3.148 0.0.0.3 area 0
+ network 172.16.3.156 0.0.0.3 area 0
+
+ip nat inside source list 1 interface se0/3/0 overload
+ip nat inside source list 1 interface se0/3/1 overload
+
+access-list 1 permit 172.16.1.0 0.0.0.127
+access-list 1 permit 172.16.1.128 0.0.0.127
+access-list 1 permit 172.16.2.0 0.0.0.127
+access-list 1 permit 172.16.2.128 0.0.0.127
+access-list 1 permit 172.16.3.0 0.0.0.127
+access-list 1 permit 172.16.3.128 0.0.0.15
+
+interface range gig0/0-1
+ ip nat inside
+interface se0/3/0
+ ip nat outside
+interface se0/3/1
+ ip nat outside
+
+router bgp 100
+ network 195.136.17.8 mask 255.255.255.252 
+ network 195.136.17.12 mask 255.255.255.252 
+ neighbor 195.136.17.14 remote-as 200
+ neighbor 195.136.17.10 remote-as 200
+```
+
+
+```markdown
+# ISP Router Configurations
+
+## ISP1 Router Configuration
+
+```plaintext
+interface se0/3/0
+ clock rate 64000
+ ip address 195.136.17.2 255.255.255.252
+ no shutdown
+
+interface se0/3/1
+ clock rate 64000
+ ip address 195.136.17.10 255.255.255.252
+ no shutdown
+
+router ospf 10
+ router-id 5.5.5.5
+ network 195.136.17.8 0.0.0.3 area 0
+ network 195.136.17.0 0.0.0.3 area 0
+
+router bgp 200
+ neighbor 195.136.17.1 remote-as 100
+ neighbor 195.136.17.9 remote-as 100
+```
+
+## ISP2 Router Configuration
+
+```plaintext
+interface se0/3/0
+ clock rate 64000
+ ip address 195.136.17.14 255.255.255.252
+ no shutdown
+
+interface se0/3/1
+ clock rate 64000
+ ip address 195.136.17.6 255.255.255.252
+ no shutdown
+
+router ospf 10
+ router-id 6.6.6.6
+ network 195.136.17.12 0.0.0.3 area 0
+ network 195.136.17.4 0.0.0.3 area 0
+
+router bgp 200
+ neighbor 195.136.17.5 remote-as 100
+ neighbor 195.136.17.13 remote-as 100
+```
+
+```
